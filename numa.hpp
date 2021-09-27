@@ -16,16 +16,24 @@
 #include <random>
 
 double real_rand();
-int int_rand(); // UNIMPLEMENTED
+int int_rand();
 
 
 double real_rand() {
     static std::random_device rd;
     static std::mt19937 gen(rd());
     static std::uniform_real_distribution<> dis(0, 1.0);
-    // static std::uniform_int_distribution<> dis(0, 9);
     return dis(gen);
 }
+
+int int_rand() {
+    static std::random_device rd;
+    static std::mt19937 gen(rd());
+    static std::uniform_int_distribution<> dis(0, 9);
+    return dis(gen);
+}
+
+
 
 template<class T = double>
 class matrix {
@@ -76,8 +84,20 @@ public:
         return str;
     }
 
-    // DOT PRODUCT OF TWO MATRICES
-    // TODO: MOVE TO EXTERNAL FUNCTION
+    void to_triangle() {
+
+        auto &M = *this;
+
+        for(int k = 0; k < rows - 1; k++) {
+            double n1 = M.get(k, k);
+            for(int i = 1 + k; i < rows; i++) {
+                double n2 = M.get(i, k);
+                for(int j = 0; j < cols; j++) {
+                    M.set(i, j) = n1 * M.get(i, j) - n2 * M.get(k, j);
+                }
+            }
+        }
+    }
 
     friend matrix operator*(const matrix &A, const matrix &B) {
         return dot_product(A, B);
@@ -88,7 +108,7 @@ public:
 matrix<double> randMatrix(int h, int w) {
     matrix<double> m(h, w);
     auto &data = m.get_data();
-    std::generate(data.begin(), data.end(), real_rand);
+    std::generate(data.begin(), data.end(), int_rand);
     return m;
     // return std::move(m); // ?
 }
