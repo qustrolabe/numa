@@ -15,6 +15,8 @@
 #include <algorithm>
 #include <random>
 
+#include <initializer_list>
+
 double real_rand();
 int int_rand();
 
@@ -46,10 +48,20 @@ public:
         rows = h;
     }
 
-    matrix(int w, int h, T value) : matrix(w, h) {
+    matrix(int h, int w, T value) : matrix(w, h) {
         for (int i = 0; i < rows; ++i) {
             for (int j = 0; j < cols; ++j) {
                 this->set(i, j) = value;
+            }
+        }
+    }
+
+    matrix(std::initializer_list<std::initializer_list<T>> l)
+        : matrix( l.size(), l.begin()->size()) {
+        int count = 0;
+        for(auto i : l) {
+            for(auto j : i) {
+                data[count++] = j;
             }
         }
     }
